@@ -1,0 +1,76 @@
+QPushButton {
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid #332D2D;
+    border-radius: 15px;
+    box-sizing: border-box;
+    color: #332D2D;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    padding: 8px 8px;
+    text-align: center;
+}
+
+QPushButton:hover {
+    color: #ffffff;
+    background-color: #332D2D;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    transform: translateY(-2px);
+}
+
+QPushButton:active {
+    box-shadow: none;
+    transform: translateY(0);
+}
+
+QLabel {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 10px;
+    color: #332D2D;
+}
+
+QComboBox {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 10px;
+    color: #332D2D;
+}
+
+QLabel#heading  {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #332D2D;
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+QLabel#sub_heading {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #332D2D;
+    margin-top: 20px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-size: 20px;
+}
+
+QLabel#prediction_label {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #07720E;
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-size: 25px;
+}
+
+QMainWindow {
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0     #ffec75,
+        stop: 1     #9aeeff);
+}
