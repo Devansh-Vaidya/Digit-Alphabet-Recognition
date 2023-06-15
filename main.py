@@ -1,7 +1,27 @@
 import customtkinter
+import numpy as np
 import win32gui
 from PIL import ImageGrab
 from customtkinter import CTkLabel, CTkCanvas, CTkButton, CTkFrame
+from keras import models
+
+
+def predict_digit(img):
+    # resize image to 28x28 pixels
+    img = img.resize((28, 28))
+    # convert rgb to grayscale
+    img = img.convert('L')
+    img = np.array(img)
+    # reshaping to support our model input and normalizing
+    img = img.reshape(1, 28, 28, 1)
+    img = img / 255.0
+    # predicting the class
+    res = model.predict([img])[0]
+    return np.argmax(res), max(res)
+
+
+# load the trained model from pickle file
+model = models.load_model("digit_recognition_model")
 
 
 class MainWindow:
@@ -10,7 +30,6 @@ class MainWindow:
         self.x = self.y = 0
 
         window.title("BAD AI")
-
         frame = CTkFrame(window, border_width=2, border_color="cyan")
         frame.grid(row=0, column=0, sticky="NESW")
         frame.grid_rowconfigure(0, weight=1)
@@ -19,7 +38,7 @@ class MainWindow:
         frame.place(in_=window, anchor="center", relx=.5, rely=.5)
 
         self.heading = CTkLabel(frame, text="Digit & Alphabet Recognition", font=("Gabriola", 40))
-        self.canvas = CTkCanvas(frame, bg="white", height=400, width=400, cursor="cross")
+        self.canvas = CTkCanvas(frame, bg="white", height=300, width=300, cursor="cross")
         self.note = CTkLabel(frame, text="Draw Digit/Alphabet to recognize!", font=("Corbel Light", 30))
         self.rec_btn = CTkButton(frame, text="Recognize", font=("Corbel Light", 20), command=self.classify_handwriting)
         self.clear_btn = CTkButton(frame, text="Clear", font=("Corbel Light", 20), command=self.clear_all)
@@ -40,14 +59,13 @@ class MainWindow:
     def classify_handwriting(self):
         canvas_handle = self.canvas.winfo_id()
         img_coords = win32gui.GetWindowRect(canvas_handle)
-        img = ImageGrab.grab(img_coords).resize((28, 28))
-        self.compute.configure(text="Computing...")
-        print(img.size)
+        digit, acc = predict_digit(ImageGrab.grab(img_coords))
+        self.compute.configure(text="The digit is " + str(digit) + " with " + str(int(acc * 100)) + "% accuracy")
 
     def draw_lines(self, event):
         self.x = event.x
         self.y = event.y
-        r = 10
+        r = 20
         self.canvas.create_oval(self.x - r, self.y - r, self.x + r, self.y + r, fill='black')
 
 
@@ -56,13 +74,10 @@ customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dar
 customtkinter.set_default_color_theme("blue")
 tk_win = customtkinter.CTk()
 win = MainWindow(tk_win)
-tk_win.title('BAD AI')
-screen_width = tk_win.winfo_screenwidth()  # Width of the screen
-screen_height = tk_win.winfo_screenheight()  # Height of the screen
 
 width = 1366
 height = 768
-x = (screen_width / 2) - (width / 2)
-y = (screen_height / 2) - (height / 2)
+x = (tk_win.winfo_screenwidth() / 2) - (width / 2)
+y = (tk_win.winfo_screenheight() / 2) - (height / 2)
 tk_win.geometry('%dx%d+%d+%d' % (width, height, x, y))
 tk_win.mainloop()

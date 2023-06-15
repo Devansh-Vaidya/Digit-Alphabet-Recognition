@@ -1,7 +1,9 @@
+import pickle
+
 import numpy as np
+from keras import layers
 from matplotlib import pyplot as plt
 from tensorflow import keras
-from keras import layers
 
 
 class Data:
@@ -13,7 +15,7 @@ class Data:
 
         # Load the data and split it into train and test sets
         (self.x_train_digit, self.y_train_digit), (
-        self.x_test_digit, self.y_test_digit) = keras.datasets.mnist.load_data()
+            self.x_test_digit, self.y_test_digit) = keras.datasets.mnist.load_data()
         self.x_train_digit = self.x_train_digit.astype("float32") / 255
         self.x_test_digit = self.x_test_digit.astype("float32") / 255
         num_classes = 10
@@ -49,7 +51,7 @@ class NeuralNetwork:
     def train(self, data, batch_size=128, epochs=15):
         self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
         training_history = self.model.fit(data.x_train_digit, data.y_train_digit, batch_size=batch_size, epochs=epochs,
-                                          validation_split=0.1)
+                                          validation_split=0.2)
         score = self.model.evaluate(data.x_test_digit, data.y_test_digit, verbose=0)
         print("Test loss:", score[0])
         print("Test accuracy:", score[1])
@@ -57,11 +59,11 @@ class NeuralNetwork:
 
     @staticmethod
     def plot_learning_curve(training):
-        plt.plot(training.history['accuracy'])
-        plt.plot(training.history['val_accuracy'])
-        plt.title('model accuracy')
-        plt.ylabel('accuracy')
-        plt.xlabel('epoch')
+        plt.plot(training.history['loss'])
+        plt.plot(training.history['val_loss'])
+        plt.title('Learning Curve')
+        plt.ylabel('Loss')
+        plt.xlabel('Epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.show()
 
@@ -69,8 +71,11 @@ class NeuralNetwork:
 def main():
     data = Data()
     neural_network = NeuralNetwork()
-    training = neural_network.train(data, 128, 15)
+    training = neural_network.train(data, 128, 25)
     neural_network.plot_learning_curve(training)
+
+    # Save the trained model
+    neural_network.model.save('digit_recognition_model')
 
 
 if __name__ == "__main__":
