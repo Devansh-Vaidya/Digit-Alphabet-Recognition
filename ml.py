@@ -6,27 +6,27 @@ from extra_keras_datasets import emnist
 
 class Data:
     def __init__(self):
-        self.x_train_digit = None
-        self.y_train_digit = None
-        self.x_test_digit = None
-        self.y_test_digit = None
+        self.x_train = None
+        self.y_train = None
+        self.x_test = None
+        self.y_test = None
 
         # Load the data and split it into train and test sets
-        (self.x_train_digit, self.y_train_digit), (
-            self.x_test_digit, self.y_test_digit) = emnist.load_data(type='bymerge')
-        self.x_train_digit = self.x_train_digit.astype("float32") / 255
-        self.x_test_digit = self.x_test_digit.astype("float32") / 255
+        (self.x_train, self.y_train), (
+            self.x_test, self.y_test) = emnist.load_data(type='bymerge')
+        self.x_train = self.x_train.astype("float32") / 255
+        self.x_test = self.x_test.astype("float32") / 255
         num_classes = 47
 
         # Add a channels dimension - needed when passing through neural network
-        self.x_train_digit = np.expand_dims(self.x_train_digit, -1)
-        self.x_test_digit = np.expand_dims(self.x_test_digit, -1)
+        self.x_train = np.expand_dims(self.x_train, -1)
+        self.x_test = np.expand_dims(self.x_test, -1)
 
         # Convert class vectors to binary class matrices
-        self.y_train_digit = keras.utils.to_categorical(self.y_train_digit, num_classes)
-        self.y_test_digit = keras.utils.to_categorical(self.y_test_digit, num_classes)
+        self.y_train = keras.utils.to_categorical(self.y_train, num_classes)
+        self.y_test = keras.utils.to_categorical(self.y_test, num_classes)
 
-        print(f"x_train shape: {self.x_train_digit.shape} - y_train shape: {self.y_train_digit.shape}")
+        print(f"x_train shape: {self.x_train.shape} - y_train shape: {self.y_train.shape}")
 
 
 class NeuralNetwork:
@@ -48,9 +48,9 @@ class NeuralNetwork:
 
     def train(self, data, batch_size=128, epochs=15):
         self.model.compile(loss="categorical_crossentropy", optimizer="SGD", metrics=["accuracy"])
-        training_history = self.model.fit(data.x_train_digit, data.y_train_digit, batch_size=batch_size, epochs=epochs,
+        training_history = self.model.fit(data.x_train, data.y_train, batch_size=batch_size, epochs=epochs,
                                           validation_split=0.2)
-        score = self.model.evaluate(data.x_test_digit, data.y_test_digit, verbose=0)
+        score = self.model.evaluate(data.x_test, data.y_test, verbose=0)
         print("Test loss:", score[0])
         print("Test accuracy:", score[1])
         return training_history
@@ -73,7 +73,7 @@ def main():
     neural_network.plot_learning_curve(training)
 
     # Save the trained model
-    neural_network.model.save('digit_recognition_model')
+    neural_network.model.save('emnist_merge_recognition_model')
 
 
 if __name__ == "__main__":
