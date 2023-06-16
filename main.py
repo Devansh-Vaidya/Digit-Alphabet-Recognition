@@ -1,22 +1,21 @@
 import customtkinter
+import cv2
 import numpy as np
-import win32gui
-from PIL import ImageGrab
+from PIL import ImageDraw, Image
 from customtkinter import CTkLabel, CTkCanvas, CTkButton, CTkFrame
 from keras import models
 
 
 def predict_digit(img):
-    # resize image to 28x28 pixels
-    img = img.resize((28, 28))
-    # convert rgb to grayscale
-    img = img.convert('L')
-    img = np.array(img)
+    # convert to grayscale, and resize to 28x28 pixel
+    img_array = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+    img_array = cv2.resize(img_array, (28, 28))
+
     # reshaping to support our model input and normalizing
-    img = img.reshape(1, 28, 28, 1)
-    img = img / 255.0
+    img_array = img_array / 255.0
+    img_array = img_array.reshape(1, 28, 28, 1)
     # predicting the class
-    res = model.predict([img])[0]
+    res = model.predict([img_array])[0]
     return np.argmax(res), max(res)
 
 
@@ -38,35 +37,42 @@ class MainWindow:
         frame.place(in_=window, anchor="center", relx=.5, rely=.5)
 
         self.heading = CTkLabel(frame, text="Digit & Alphabet Recognition", font=("Gabriola", 40))
-        self.canvas = CTkCanvas(frame, bg="white", height=300, width=300, cursor="cross")
+        self.canvas = CTkCanvas(frame, bg="white", height=400, width=400, cursor="cross")
         self.note = CTkLabel(frame, text="Draw Digit/Alphabet to recognize!", font=("Corbel Light", 30))
         self.rec_btn = CTkButton(frame, text="Recognize", font=("Corbel Light", 20), command=self.classify_handwriting)
         self.clear_btn = CTkButton(frame, text="Clear", font=("Corbel Light", 20), command=self.clear_all)
-        self.compute = CTkLabel(frame, text="", font=("Corbel Light", 40))
+        self.predict = CTkLabel(frame, text="", font=("Corbel Light", 45))
+        self.accurate = CTkLabel(frame, text="", font=("Corbel Light", 45))
 
         self.heading.grid(row=0, column=0, rowspan=2, columnspan=5, padx=20, pady=30)
         self.note.grid(row=2, column=0, rowspan=1, columnspan=2, padx=20)
         self.canvas.grid(row=3, column=0, rowspan=3, columnspan=2, padx=20, pady=20)
         self.rec_btn.grid(row=2, column=3, padx=20)
         self.clear_btn.grid(row=2, column=4, padx=20)
-        self.compute.grid(row=3, column=3, columnspan=2, padx=20)
+        self.predict.grid(row=3, column=3, columnspan=2, padx=20)
+        self.accurate.grid(row=4, column=3, columnspan=2, padx=20)
 
         self.canvas.bind("<B1-Motion>", self.draw_lines)
+        # Get Image from canvas
+        self.img = Image.new('RGB', (400, 400), (0, 0, 0))
+        self.img_draw = ImageDraw.Draw(self.img)
 
     def clear_all(self):
         self.canvas.delete("all")
+        self.img = Image.new('RGB', (400, 400), (0, 0, 0))
+        self.img_draw = ImageDraw.Draw(self.img)
 
     def classify_handwriting(self):
-        canvas_handle = self.canvas.winfo_id()
-        img_coords = win32gui.GetWindowRect(canvas_handle)
-        digit, acc = predict_digit(ImageGrab.grab(img_coords))
-        self.compute.configure(text="The digit is " + str(digit) + " with " + str(int(acc * 100)) + "% accuracy")
+        digit, acc = predict_digit(self.img)
+        self.predict.configure(text="The digit is " + str(digit) + "!")
+        self.accurate.configure(text="Accuracy: " + str(int(acc * 100)) + "%")
 
     def draw_lines(self, event):
         self.x = event.x
         self.y = event.y
-        r = 20
+        r = 15
         self.canvas.create_oval(self.x - r, self.y - r, self.x + r, self.y + r, fill='black')
+        self.img_draw.ellipse((self.x - r, self.y - r, self.x + r, self.y + r), fill='white')
 
 
 # Run the application

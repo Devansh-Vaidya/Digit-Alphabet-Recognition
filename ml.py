@@ -1,10 +1,8 @@
-import pickle
-
 import numpy as np
 from keras import layers
 from matplotlib import pyplot as plt
 from tensorflow import keras
-
+from extra_keras_datasets import emnist
 
 class Data:
     def __init__(self):
@@ -15,10 +13,10 @@ class Data:
 
         # Load the data and split it into train and test sets
         (self.x_train_digit, self.y_train_digit), (
-            self.x_test_digit, self.y_test_digit) = keras.datasets.mnist.load_data()
+            self.x_test_digit, self.y_test_digit) = emnist.load_data(type='bymerge')
         self.x_train_digit = self.x_train_digit.astype("float32") / 255
         self.x_test_digit = self.x_test_digit.astype("float32") / 255
-        num_classes = 10
+        num_classes = 47
 
         # Add a channels dimension - needed when passing through neural network
         self.x_train_digit = np.expand_dims(self.x_train_digit, -1)
@@ -42,14 +40,14 @@ class NeuralNetwork:
                 layers.MaxPooling2D(pool_size=(2, 2)),
                 layers.Flatten(),
                 layers.Dropout(0.5),
-                layers.Dense(10, activation="softmax"),
+                layers.Dense(47, activation="softmax"),
             ]
         )
 
         self.model.summary()
 
     def train(self, data, batch_size=128, epochs=15):
-        self.model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
+        self.model.compile(loss="categorical_crossentropy", optimizer="SGD", metrics=["accuracy"])
         training_history = self.model.fit(data.x_train_digit, data.y_train_digit, batch_size=batch_size, epochs=epochs,
                                           validation_split=0.2)
         score = self.model.evaluate(data.x_test_digit, data.y_test_digit, verbose=0)
@@ -71,7 +69,7 @@ class NeuralNetwork:
 def main():
     data = Data()
     neural_network = NeuralNetwork()
-    training = neural_network.train(data, 128, 25)
+    training = neural_network.train(data, 128, 50)
     neural_network.plot_learning_curve(training)
 
     # Save the trained model
