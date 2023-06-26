@@ -2,7 +2,6 @@ import customtkinter
 import cv2
 import numpy as np
 from PIL import ImageDraw, Image
-from customtkinter import CTkLabel, CTkCanvas, CTkButton, CTkFrame
 from keras import models
 
 by_merge_map = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B',
@@ -35,20 +34,20 @@ class MainWindow:
         self.x = self.y = 0
 
         window.title("BAD AI")
-        frame = CTkFrame(window, border_width=2, border_color="cyan")
+        frame = customtkinter.CTkFrame(window, border_width=2, border_color="cyan")
         frame.grid(row=0, column=0, sticky="NESW")
         frame.grid_rowconfigure(0, weight=1)
         frame.grid_columnconfigure(0, weight=1)
         frame.pack(fill='both', expand=1)
         frame.place(in_=window, anchor="center", relx=.5, rely=.5)
 
-        self.heading = CTkLabel(frame, text="Digit & Alphabet Recognition", font=("Gabriola", 40))
-        self.canvas = CTkCanvas(frame, bg="white", height=400, width=400, cursor="cross")
-        self.note = CTkLabel(frame, text="Draw Digit/Alphabet to recognize!", font=("Corbel Light", 30))
-        self.rec_btn = CTkButton(frame, text="Recognize", font=("Corbel Light", 20), command=self.classify_handwriting)
-        self.clear_btn = CTkButton(frame, text="Clear", font=("Corbel Light", 20), command=self.clear_all)
-        self.predict = CTkLabel(frame, text="", font=("Corbel Light", 45))
-        self.accurate = CTkLabel(frame, text="", font=("Corbel Light", 45))
+        self.heading = customtkinter.CTkLabel(frame, text="Digit & Alphabet Recognition", font=("Gabriola", 40))
+        self.canvas = customtkinter.CTkCanvas(frame, bg="white", height=400, width=400, cursor="cross")
+        self.note = customtkinter.CTkLabel(frame, text="Draw Digit/Alphabet to recognize!", font=("Corbel Light", 30))
+        self.rec_btn = customtkinter.CTkButton(frame, text="Recognize", font=("Corbel Light", 20), command=self.classify_handwriting)
+        self.clear_btn = customtkinter.CTkButton(frame, text="Clear", font=("Corbel Light", 20), command=self.clear_all)
+        self.predict = customtkinter.CTkLabel(frame, text="", font=("Corbel Light", 45))
+        self.accurate = customtkinter.CTkLabel(frame, text="", font=("Corbel Light", 45))
 
         self.heading.grid(row=0, column=0, rowspan=2, columnspan=5, padx=20, pady=30)
         self.note.grid(row=2, column=0, rowspan=1, columnspan=2, padx=20)

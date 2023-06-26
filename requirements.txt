@@ -1,0 +1,8 @@
+cv2
+numpy
+PIL
+matplotlib
+tensorflow
+keras
+customtkinter
+extra-keras-datasets
