@@ -1,8 +1,7 @@
-cv2
+opencv
+keras
+matplotlib
 numpy
 PIL
-matplotlib
+pip
 tensorflow
-keras
-customtkinter
-extra-keras-datasets
