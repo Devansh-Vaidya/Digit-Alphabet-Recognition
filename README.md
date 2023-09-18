@@ -1,6 +1,8 @@
 # Digit and Alphabet Recognition
 This project aims to recognize handwritten digits and alphabets using a graphical user interface (GUI) built with Tkinter. The application utilizes the Keras library to obtain the EMNIST dataset and create a machine learning model for recognition.
 
+![Screenshot 2023-09-18 1_22_22 PM](https://github.com/Devansh-Vaidya/Digit-Alphabet-Recognition/assets/92869151/b48d6fe0-73df-4684-b93a-0730afe1dcbb)
+
 ## Table of Contents
 - Prerequisites
 - Installation
